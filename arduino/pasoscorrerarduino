@@ -1,0 +1,39 @@
+vi .bashrc 
+
+y ahi vas a poner tus variables de entorno 
+
+source .bashrc   //carga en memoria todas las actulizaciones
+
+
+
+Para el primer caso abirmos la consola y ponemos export PATH=$PATH:/HOME/JUAN/ y listo ya podemos llamar a nuestro script desde cualquier sitio con sh copia.sh. El problema es que solo dura hasta que cerremos sesión.
+
+Para el segundo caso editamos el archivo /etc/environment y agregamos al final, justo antes de las comillas la direccion del script, en nuestro caso seria :/HOME/JUAN los dos puntos tambien por que es el operador de concatenación de strings. Listo si reiniciamos el equipo ya tenemos nuestro script en el path
+
+
+
+0b significa que es binario es una constante que pertenece a avr.h
+
+Port b quiero que envie una señal alta o una señal baja
+
+
+ddr que entrada de pines del banco queremos de entrada o salida 
+
+
+el -c es generado a para los archivos  y el o para el objecto
+
+//avr-gcc -Os -DF_CPU=16000000UL -mmcu=atmega328p -c -o serial-write.o serial-write.c
+
+//avr-gcc -mmcu=atmega328p serial-write.o -o serial-write 
+
+//generating hex file
+//avr-objcopy -O ihex -R.eeprom serial-write serial-write.hex
+
+
+
+compribar si reconocio el arduino 
+dmesg
+//el nombre del usb en este caso ttyACM0
+sudo avrdude -F -V -c arduino -p ATMEGA328p -P/dev/ttyACM0 -b 115200 -U flash:w:semaforo.hex 
+
+
