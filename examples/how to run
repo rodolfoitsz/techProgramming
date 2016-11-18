@@ -1,0 +1,32 @@
+/usr/lib/jvm/java-8-openjdk-i386/include
+
+
+gcc -I/usr/lib/jvm/java-8-openjdk-i386/include/ -I/usr/lib/jvm/java-8-openjdk-i386/include/linux -L/usr/lib/jvm/java-8-openjdk-i386/jre/lib/i386/client program.c -ljvm
+
+
+gcc -I/usr/lib/jvm/java-8-openjdk-i386/include/ -I/usr/lib/jvm/java-8-openjdk-i386/include/linux -L/usr/lib/jvm/java-8-openjdk-i386/jre/lib/i386/server program.c -ljvm
+
+
+export LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-i386/jre/lib/i386/server
+
+
+
+//Steps to Run C Programs since Java 
+
+/*Path to find the javah.exe
+Step three
+export LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-i386/bin
+
+
+-I/usr/lib/jvm/java-8-openjdk-i386/bin$  
+
+
+Step five Shared Library
+
+gcc -shared -I/usr/lib/jvm/java-8-openjdk-i386/include/ -I/usr/lib/jvm/java-8-openjdk-i386/include/linux -I/usr/local/jdk/include/solaris CallC.c -fPIC -o libCallC.so
+
+Step 6
+java -Djava.library.path=/home/rodo/Desktop/programs/JavaToC/ CallC
+
+
+
