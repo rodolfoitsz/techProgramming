@@ -31,7 +31,7 @@ el -c es generado a para los archivos  y el o para el objecto
 
 
 
-compribar si reconocio el arduino 
+comprobar si reconocio el arduino 
 dmesg
 //el nombre del usb en este caso ttyACM0
 sudo avrdude -F -V -c arduino -p ATMEGA328p -P/dev/ttyACM0 -b 115200 -U flash:w:semaforo.hex 
@@ -39,5 +39,8 @@ sudo avrdude -F -V -c arduino -p ATMEGA328p -P/dev/ttyACM0 -b 115200 -U flash:w:
 
 //pasos para compilar el codigo bluetooth 
 gcc scanbluetooth.c -lbluetooth -o scanbluetooth
+
+//con esto haces pair con el bluetooth 
+bluez-simple-agent hci# 98:D3:31:30:71:08
 
 
