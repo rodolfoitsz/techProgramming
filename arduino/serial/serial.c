@@ -4,6 +4,7 @@
 #define USART_BAUDRATE 9600
 #define UBRR_VALUE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 
+
 int initialize() {
 	DDRD |= _BV(DDD6);
 	DDRD |= _BV(DDD5);
@@ -78,21 +79,29 @@ int main (void) {
     uint8_t lastData;
     
     // Initialize weels pins
-	initialize();    
+	initialize();  
+
+  DDRB |= _BV(DDB5);  
         
     while(1)
     {
+
         // Receive data
         recivedData = USART0ReceiveByte();
         //lastData = recivedData;
         
-        if (recivedData==65) moveForward();
+        if (recivedData==65) {
+          PORTB |= _BV(PORTB5);// PORTB5
+          _delay_ms(3000);
+          PORTB &= ~_BV(PORTB5);
+           moveForward();
+           }
         else if (recivedData==66) moveBackward();
         else if (recivedData==82) turnRight();
         else if (recivedData==76) turnLeft();
         else if (recivedData==83) stop();        
         
-	USART0SendByte(recivedData);	// echo
+	USART0SendByte(121);	// echo
     }
 }
 
