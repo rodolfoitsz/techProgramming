@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
     // send a message
 
-    while( status == 0 ) {
+    while( status >= 0 ) {
 
          printf("You entered the string\n");
         char tmpChar;
