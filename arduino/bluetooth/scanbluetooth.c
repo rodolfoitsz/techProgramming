@@ -30,17 +30,18 @@ int main(int argc, char **argv)
     num_rsp = hci_inquiry(dev_id, len, max_rsp, NULL, &ii, flags);
     if( num_rsp < 0 ) perror("hci_inquiry");
 
+ 
     for (i = 0; i < num_rsp; i++) {
         ba2str(&(ii+i)->bdaddr, addr);
-      unsigned char type[4];
-       type[i]=(&(ii+i)->dev_class);
+   
+       uint8_t  type [3];
+       int a =hci_read_class_of_dev(sock,&(ii+i)->bdaddr,0);
+
         memset(name, 0, sizeof(name));
-        if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), 
-            name, 0) < 0)
-         
+        if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), name, 0) < 0)    
         strcpy(name, "[unknown]");
         printf("%s  %s\n", addr, name);
-        printf("%d \n", type[i]);
+        printf("%d %d %d  %d \n",type[0],type[1],type[2],a);
     }
 
     free( ii );
