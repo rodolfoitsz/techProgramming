@@ -32,18 +32,22 @@ int main(int argc, char **argv)
 
     for (i = 0; i < num_rsp; i++) {
         ba2str(&(ii+i)->bdaddr, addr);
-       int type [3];
-       type=(&(ii+i)->dev_class);
+      unsigned char type[4];
+       type[i]=(&(ii+i)->dev_class);
         memset(name, 0, sizeof(name));
         if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), 
             name, 0) < 0)
          
         strcpy(name, "[unknown]");
         printf("%s  %s\n", addr, name);
-       // printf("%d \n", type[0]);
+        printf("%d \n", type[i]);
     }
 
     free( ii );
     close( sock );
     return 0;
 }
+
+
+
+//gcc scanbluetooth.c -lbluetooth -o scanbluetooth
