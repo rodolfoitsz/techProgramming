@@ -5,6 +5,8 @@
 #define UBRR_VALUE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 
 
+
+
 int initialize() {
 	DDRD |= _BV(DDD6);
 	DDRD |= _BV(DDD5);
