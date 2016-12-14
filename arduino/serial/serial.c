@@ -91,19 +91,32 @@ int main (void) {
         // Receive data
         recivedData = USART0ReceiveByte();
         //lastData = recivedData;
+
         
-        if (recivedData==65) {
+        
+        // slash simbol
+        if (recivedData==47) {
           PORTB |= _BV(PORTB5);// PORTB5
-          _delay_ms(3000);
-          PORTB &= ~_BV(PORTB5);
-           moveForward();
+          // moveForward();
            }
-        else if (recivedData==66) moveBackward();
-        else if (recivedData==82) turnRight();
+          
+           //+ simbol
+            if (recivedData==43) {
+          PORTB &= ~_BV(PORTB5);
+          // moveForward();
+
+           }
+
+      /*  else if (recivedData==66) moveBackward();
+        else if (re
+civedData==82) turnRight();
         else if (recivedData==76) turnLeft();
-        else if (recivedData==83) stop();        
+        else if (recivedData==83) stop(); */       
         
-	USART0SendByte(121);	// echo
+            _delay_ms(.5);
+          
+       //if(recivedData!=47 ||recivedData!=43) 
+	USART0SendByte(recivedData);	// echo
     }
 }
 
