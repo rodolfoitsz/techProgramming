@@ -8,6 +8,13 @@
 #define USART_BAUDRATE 9600
 #define UBRR_VALUE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 
+
+void print(){
+
+
+}
+
+
  
 int main(int argc, char **argv)
 {
@@ -35,24 +42,32 @@ struct sockaddr_rc addr = { 0 };
     // send a message
 
 uint8_t recivedData;
-
-
+    
+     int stringReceived[256];
+     
     while( status >= 0 ) {
 
          printf("Send a command\n");
         char tmpChar;
-        scanf("%c",&tmpChar);
+
+        int i =0;
+        while(tmpChar !=0){
+        scanf("%s",&tmpChar);
         getchar(); // To consume the newline  
          
-        buf[0] = tmpChar;
+        buf[0] = tmpChar[i];
          
         status = write(s, buf, 4);
+         
+        unsigned char buf2[4];
 
-      unsigned char buf2[4];
-
-        int status2 = read(s, buf2,4);
-        printf("Status 2 %c\n",buf2[0]);
-
+       // int status2 = read(s, buf2,4);
+         stringReceived[i]=buf2[0];
+        printf("Status 2 %c\n",stringReceived[i]);
+        
+           
+          i++;
+         }
     }
 
     if( status < 0 ) perror("uh oh");
