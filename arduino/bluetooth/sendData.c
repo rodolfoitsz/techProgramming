@@ -35,10 +35,12 @@ int i =0;
 int coincidences=0;
 while(arrayApaga[i] != 0){
 
-if(stringReceived[i]==arrayApaga[i]){
-coincidences++;
+  printf("hola %d",i);
+
+   if(stringReceived[i]==arrayApaga[i]){
+    coincidences++;
     }     
-i++;
+   i++;
 }
 return coincidences;
 
@@ -68,7 +70,6 @@ struct sockaddr_rc addr = { 0 };
     // connect to server
     status = connect(s, (struct sockaddr *)&addr, sizeof(addr));
 
- unsigned char buf[4];
 
     // send a message
 
@@ -77,6 +78,8 @@ uint8_t recivedData;
 
     while( status >= 0 ) {
 
+        
+         unsigned char buf[4];
         char stringReceived[256];
          printf("Send a command\n");
         char tmpChar[256];
@@ -94,25 +97,24 @@ uint8_t recivedData;
 
         int status2 = read(s, buf2,4);
         stringReceived[i]=buf2[0];
+
         printf("Status %c\n",stringReceived[i]);
          
          i ++;
   
          }
 
-        
+      
           if(enciende (stringReceived)==8){
             char send[1024] = { '/' };
             write(s,send, 4);
            }
 
-         if(apaga (stringReceived)==5){
-
-             char send[1024] = { '+' };
+         else{
+           char send[1024] = { '+' };
              write(s,send, 4);
 
-              }
-
+            }
          
 
     }
