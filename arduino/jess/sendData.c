@@ -82,7 +82,8 @@ int reset() {
 
 char evalBuffer[512];
 /* Call a EVAL command and place the result on the buffer */
-void eval(char* command) {
+int eval(char* command) {
+   
     jmethodID mid = (*env)->GetMethodID(env, cls, "eval", "(Ljava/lang/String;)Ljess/Value;");
     
     if (mid == 0) { 
@@ -97,7 +98,7 @@ void eval(char* command) {
         // converting to jstring
         jstring arg = (*env)->NewStringUTF(env, command); 
         // calling the function and storing the result
-        jstring jS = (*env)->CallVoidMethod(env, obj, mid, arg);
+       // jstring jS = (*env)->CallVoidMethod(env, obj, mid, arg);
     }
     
     return 1;
