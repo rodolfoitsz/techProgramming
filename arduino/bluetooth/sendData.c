@@ -9,42 +9,7 @@
 #define USART_BAUDRATE 9600
 #define UBRR_VALUE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 
-int arrayEnciende[8]={'E','N','C','I','E','N','D','E'};
-int arrayApaga[5]={'A','P','A','G','A'};
-//int arrayEnciende[8]={69,78,67,73,69,78,68,69}
 
-int enciende(char  * stringReceived){
-
-int i =0;
-int coincidences=0;
-while(arrayEnciende[i] != 0){
-
-if(stringReceived[i]==arrayEnciende[i]){
-coincidences++;
-    }     
-i++;
-}
-return coincidences;
-
-}
-
-
-int apaga(char  * stringReceived){
-
-int i =0;
-int coincidences=0;
-while(arrayApaga[i] != 0){
-
-  printf("hola %d",i);
-
-   if(stringReceived[i]==arrayApaga[i]){
-    coincidences++;
-    }     
-   i++;
-}
-return coincidences;
-
-}
 
 
  
@@ -53,7 +18,7 @@ int main(int argc, char **argv)
 
 struct sockaddr_rc addr = { 0 };
     int s, status,bytes_read;
-    char dest[18] = "98:D3:31:30:71:08";
+    char dest[18] = "98:D3:32:10:4B:79";
    
     char bufr[1024] = { 0 };
    
@@ -82,39 +47,15 @@ uint8_t recivedData;
          unsigned char buf[4];
         char stringReceived[256];
          printf("Send a command\n");
-        char tmpChar[256];
-        scanf("%s",tmpChar);
-        getchar(); // To consume the newline  
-  
-      int i =0;
-      while ( tmpChar[i] != 0){
-        buf[0] = tmpChar[i];
+         char tmpChar;
+         scanf("%c",&tmpChar);
+         getchar(); // To consume the newline  
+         buf[0] = tmpChar;
 
         status = write(s,buf, 4);
         
          unsigned char buf2[4];
-         sleep(2);
-
         int status2 = read(s, buf2,4);
-        stringReceived[i]=buf2[0];
-
-        printf("Status %c\n",stringReceived[i]);
-         
-         i ++;
-  
-         }
-
-      
-          if(enciende (stringReceived)==8){
-            char send[1024] = { '/' };
-            write(s,send, 4);
-           }
-
-         else{
-           char send[1024] = { '+' };
-             write(s,send, 4);
-
-            }
          
 
     }
