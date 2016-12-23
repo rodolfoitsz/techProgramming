@@ -172,11 +172,20 @@ uint8_t recivedData;
         buf[0] = tmpChar;
 
         status = write(s,buf, 4);
+
+        sleep(4);
         
-         unsigned char buf2[4];
-        int status2 = read(s, buf2,4);
-        printf("status 2 %c\n",buf2[0] );
+         unsigned char buf0[4];
          
+    
+        read(s, buf0,5);
+       
+       //values with bigger number means  superfice is white
+        printf("point 1  %d\n",buf0[0] );
+        printf("point 2  %d\n",buf0[1] );
+        printf("point 3  %d\n",buf0[2] );
+        printf("point 4  %d\n",buf0[3] );
+       
 
     }
 
