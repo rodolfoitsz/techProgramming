@@ -133,7 +133,11 @@ int main(int argc, char **argv)
 */
     struct sockaddr_rc addr = { 0 };
     int s, status,bytes_read;
-    char dest[18] = "98:D3:32:10:4B:79";
+   //new bluetooth 
+   //char dest[18] = "98:D3:32:10:4B:79";
+
+    //oldbluetooth
+    char dest[18] = "98:D3:31:30:71:08";
    
     char bufr[1024] = { 0 };
    
