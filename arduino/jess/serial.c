@@ -124,6 +124,20 @@ uint8_t* sense() {
 }
 
 
+void sendData(){
+
+	// sense and send results
+		uint8_t *resultFromSensing = sense();
+
+		USART0SendByte(resultFromSensing[0]);
+		USART0SendByte(resultFromSensing[1]);
+		USART0SendByte(resultFromSensing[2]);
+		USART0SendByte(resultFromSensing[3]);
+
+
+
+}
+
 
 int main (void) {
 	
@@ -140,27 +154,28 @@ int main (void) {
 	
 	int exit = 0;
 
+
+	    sendData();
+
     while(!exit)
     {
  	
 		
         // Receive data
         recivedData = USART0ReceiveByte();
+       
+         if (recivedData==105) 				// turn left and go in that dir
+		{
+
+       sendData();
+
+		}
+
         
         if (recivedData==65) 				// turn left and go in that dir
 		{
-			turnLeft();
-			_delay_ms(ROTATING_TIME);
-			stop();
-			move();
 
-           	// sense and send results
-		uint8_t *resultFromSensing = sense();
-
-		USART0SendByte(resultFromSensing[0]);
-		USART0SendByte(resultFromSensing[1]);
-		USART0SendByte(resultFromSensing[2]);
-		USART0SendByte(resultFromSensing[3]);
+       
 
 		}
 		else if (recivedData==66) 			// don't turn, simply go 

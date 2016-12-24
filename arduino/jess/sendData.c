@@ -98,7 +98,8 @@ int eval(char* command) {
         // converting to jstring
         jstring arg = (*env)->NewStringUTF(env, command); 
         // calling the function and storing the result
-       // jstring jS = (*env)->CallVoidMethod(env, obj, mid, arg);
+       (*env)->CallVoidMethod(env, obj, mid, arg);
+        printf("eval called\n");
     }
     
     return 1;
@@ -109,12 +110,15 @@ int eval(char* command) {
 int main(int argc, char **argv)
 {
 
-  /*  instantiateVM();
+   instantiateVM();
     reset();
 
 
-  eval("(defrule 1 (left a)");
-    eval("(defrule f (forw a)");
+eval("(defrule 1 (left_a) => (printout t \"tienes gripa\"))");
+   eval("(assert (left_a))");
+   eval("(run)");
+   eval("(facts)");
+  /*   eval("(defrule f (forw a)");
     eval("(defrule r (right a)");
     eval("(defrule b (back a)");
 
@@ -124,13 +128,13 @@ int main(int argc, char **argv)
 
      (forw b) (right c) (back c) => (assert (tienes gripa)))");
 
-    eval("(assert (hecho a))");
+    eval("(assert (left a))");
     eval("(assert (hecho b))");
-    eval("(assert (hecho c))");
+    eval("(assert (hecho c))");*/
 
 
    shutDown();
-*/
+
     struct sockaddr_rc addr = { 0 };
     int s, status,bytes_read;
    //new bluetooth 
