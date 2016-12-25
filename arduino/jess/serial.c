@@ -5,7 +5,7 @@
 #define UBRR_VALUE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 
 #define MOVING_TIME 100
-#define ROTATING_TIME 100
+#define ROTATING_TIME 500
 
 int initialize() {
 	DDRD |= _BV(DDD6);
@@ -97,7 +97,8 @@ void move() {
 	stop();
 }
 
-uint8_t tmp[3];
+
+uint8_t tmp[4];
 
 uint8_t* sense() {
 	
@@ -109,14 +110,35 @@ uint8_t* sense() {
 	stop();
 	tmp[1] = read_adc(0);
 	
-	turnRight();
-	_delay_ms(ROTATING_TIME * 2);
+	turnLeft();
+	_delay_ms(ROTATING_TIME);
 	stop();
 	tmp[2] = read_adc(0);
+
+	turnLeft();
+	_delay_ms(ROTATING_TIME);
+	stop();
+	tmp[3] = read_adc(0);
+
+	
 	
 	return tmp;
 }
 
+
+void sendData(){
+
+	// sense and send results
+		uint8_t *resultFromSensing = sense();
+
+		USART0SendByte(resultFromSensing[0]);
+		USART0SendByte(resultFromSensing[1]);
+		USART0SendByte(resultFromSensing[2]);
+		USART0SendByte(resultFromSensing[3]);
+
+
+
+}
 
 
 int main (void) {
@@ -134,38 +156,28 @@ int main (void) {
 	
 	int exit = 0;
 
+
+	    sendData();
+
     while(!exit)
     {
- 
-          
-		// sense and send results
-		/*uint8_t *resultFromSensing = sense();
 
-		USART0SendByte(resultFromSensing[0]);
-		USART0SendByte(resultFromSensing[1]);
-		USART0SendByte(resultFromSensing[2]);*/
 		
         // Receive data
         recivedData = USART0ReceiveByte();
+       
+         if (recivedData==105) 				// turn left and go in that dir
+		{
+
+       sendData();
+
+		}
+
         
         if (recivedData==65) 				// turn left and go in that dir
 		{
-			turnLeft();
-			_delay_ms(ROTATING_TIME);
-			stop();
-			move();
 
-           	// sense and send results
-		uint8_t *resultFromSensing = sense();
-
-              USART0SendByte(resultFromSensing[0]);  
-              USART0SendByte(resultFromSensing[0]);
-
-             
-		    
-		   
-		     
-		
+  
 		}
 		else if (recivedData==66) 			// don't turn, simply go 
 		{		
