@@ -176,26 +176,11 @@ uint8_t recivedData;
         buf[0] = tmpChar;
 
         status = write(s,buf, 4);
-<<<<<<< HEAD
-         sleep(2);
-
-
-
-         uint8_t buf2[4];
-
-        
-        int status2 = read(s, buf2,4);
-        printf("status 0 %c\n", buf2[0] );
-         printf("status 1 %c\n",buf2[1] );
-        
-=======
 
         sleep(4);
         
          unsigned char buf0[4];
->>>>>>> a1134e4c5d05108a740a573729822f0a23f2fed6
-         
-    
+
         read(s, buf0,5);
        
        //values with bigger number means  superfice is white
