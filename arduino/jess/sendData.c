@@ -172,10 +172,17 @@ uint8_t recivedData;
         buf[0] = tmpChar;
 
         status = write(s,buf, 4);
+         sleep(2);
+
+
+
+         uint8_t buf2[4];
+
         
-         unsigned char buf2[4];
         int status2 = read(s, buf2,4);
-        printf("status 2 %c\n",buf2[0] );
+        printf("status 0 %c\n", buf2[0] );
+         printf("status 1 %c\n",buf2[1] );
+        
          
 
     }

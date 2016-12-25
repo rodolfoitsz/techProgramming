@@ -96,8 +96,11 @@ void move() {
 	_delay_ms(MOVING_TIME);
 	stop();
 }
+
+uint8_t tmp[3];
+
 uint8_t* sense() {
-	uint8_t tmp[3];
+	
 	
 	tmp[0] = read_adc(0);
 	
@@ -136,11 +139,11 @@ int main (void) {
  
           
 		// sense and send results
-		uint8_t *resultFromSensing = sense();
+		/*uint8_t *resultFromSensing = sense();
 
 		USART0SendByte(resultFromSensing[0]);
 		USART0SendByte(resultFromSensing[1]);
-		USART0SendByte(resultFromSensing[2]);
+		USART0SendByte(resultFromSensing[2]);*/
 		
         // Receive data
         recivedData = USART0ReceiveByte();
@@ -155,12 +158,14 @@ int main (void) {
            	// sense and send results
 		uint8_t *resultFromSensing = sense();
 
-		USART0SendByte(resultFromSensing[0]);
-		USART0SendByte(resultFromSensing[1]);
-		USART0SendByte(resultFromSensing[2]);
+              USART0SendByte(resultFromSensing[0]);  
+              USART0SendByte(resultFromSensing[0]);
+
+             
+		    
+		   
+		     
 		
-
-
 		}
 		else if (recivedData==66) 			// don't turn, simply go 
 		{		
