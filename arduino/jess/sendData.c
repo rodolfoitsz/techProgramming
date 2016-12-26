@@ -28,6 +28,7 @@ JavaVMOption options[1];
  jobject obj;
  jclass cls;
 
+
 /* Destroy the JVM */
 int shutDown() { 
     (*jvm)->DestroyJavaVM(jvm); 
@@ -35,7 +36,7 @@ int shutDown() {
 }
 
 /* Instantiate the JVM, find the class and instantiate it */
- int instantiateVM(int val1,int val2,int val3,int val4) {
+ int instantiateVM( int  *values ) {
    
    options[0].optionString = "-Djava.class.path=.";
    memset(&vm_args, 0, sizeof(vm_args));
@@ -43,21 +44,30 @@ int shutDown() {
    vm_args.nOptions = 1;
    vm_args.options = options;
    status = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+  
+
 
     // Virtual Machine creation
    if (status == JNI_ERR) { printf("problem in VM creation\n\n"); return -1; }  
+
 
     // Looking for the class
    cls = (*env)->FindClass(env, "JessJava");     
    if (cls == 0) { printf("problem in finding class\n\n"); return shutDown(); } 
     
     // Finding class constructor
-   jmethodID mid = (*env)->GetStaticMethodID(env, cls, "dataJessMethod", "(IIII)C");
+   jmethodID mid = (*env)->GetStaticMethodID(env, cls, "dataJessMethod", "([I)C");
    if (mid == 0) { printf("problem with static method\n\n"); return shutDown(); }
 
-   
-   jchar resultChar= (*env)->CallStaticCharMethod(env, cls, mid, val1,val2,val3,val4);
-         printf("Result of booleanMethod: %c\n", resultChar);
+       
+      jintArray intArray= (*env)->NewIntArray(env,4);
+       
+       (*env)->SetIntArrayRegion(env,intArray,0,4,values);
+
+       
+
+   jchar resultChar= (*env)->CallStaticCharMethod(env, cls, mid, intArray);
+         //printf("Result of StaticMethod: %c\n", resultChar);
 
 
    return 1;
@@ -68,12 +78,7 @@ int shutDown() {
 int main(int argc, char **argv)
 {
 
-  instantiateVM(220 ,180 ,210, 4);
-  
-  shutDown();
-
-
-  /*  struct sockaddr_rc addr = { 0 };
+ struct sockaddr_rc addr = { 0 };
     int s, status,bytes_read;
    //new bluetooth 
    //char dest[18] = "98:D3:32:10:4B:79";
@@ -117,9 +122,9 @@ uint8_t recivedData;
 
         sleep(4);
         
-         unsigned char buf0[4];
+        unsigned int buf0[4];
 
-        read(s, buf0,5);
+        read(s, buf0,4);
        
        //values with bigger number means  superfice is white
         printf("point 1  %d\n",buf0[0] );
@@ -127,16 +132,18 @@ uint8_t recivedData;
         printf("point 3  %d\n",buf0[2] );
         printf("point 4  %d\n",buf0[3] );
 
+       sleep(1);
 
+        instantiateVM(buf0);
   
-    
+        shutDown();
        
 
     }
 
     if( status < 0 ) perror("uh oh");
 
-    close(s);*/
+    close(s);
     return 0;
 }
 

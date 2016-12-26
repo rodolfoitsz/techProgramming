@@ -1,13 +1,77 @@
 
 import jess.*;
+import java.util.Arrays;
+import java.io.StringWriter;
+
 
 class JessJava {
 
-    static char dataJessMethod(int val1,int val2,int val3,int val4) {
+    static char dataJessMethod(int arrayValues[]) {
+  StringWriter sw = new StringWriter();
+
+try{
+
+       Rete r = new Rete();
+        r.eval("(reset)");
+
+
+        r.eval("(defrule forward (_for)  => (printout t \"go_forward F\n \"))");
+        r.eval("(defrule left (_left)  => (printout t \"turn_left L\n \" ) )");
+        r.eval("(defrule right (_right)  => (printout t \"turn_right R\n \"  ))");
+        r.eval("(defrule back (_back)  => (printout t \"go_back B\n \") )");
+
+
+     
+    // Connect the "t" router to the StringWriter
+    r.addOutputRouter("t", sw);
+
+ 
+     final  int val1 = arrayValues[0];
+     final int val2 = arrayValues[1];
+     final int val3 = arrayValues[2];
+     final  int val4 = arrayValues[3];
+
+ Arrays.sort( arrayValues );
+
+ int biggestNumber =arrayValues[3];
 
 
 
-       try{
+ if(biggestNumber == val1){
+   r.eval("(assert (_for))");
+
+ }else if (biggestNumber== val2){
+
+r.eval("(assert (_left))");
+
+ }else if(biggestNumber==val3){
+  r.eval("(assert (_right))");
+
+
+ }else {
+  r.eval("(assert (_back))");
+
+ }
+
+  r.eval("(run)");
+
+
+  System.out.println(sw);
+
+ //r.eval("(facts)");
+
+
+}catch(Exception e){
+
+ System.out.println("This is the exception "+e);
+
+}
+ 
+
+
+       
+
+   /*    try{
  
         Rete r = new Rete();
         r.eval("(reset)");
@@ -17,7 +81,7 @@ class JessJava {
        
 
 
-        r.eval("(deffunction max (?a ?b ?c ?d) ( if (> ?a ?b ) then if(> ?a ?c)  ) (return ?a) )");
+        r.eval("(deffunction max (?a ?b ?c ?d) ( if (> ?a ?b ?c ?d) then a  )");
         r.eval("(deffunction max (?b ?a ?c ?d) ( if (> ?b ?a ?c ?d) then (return ?b)  ) )");
         r.eval("(deffunction max (?c ?a ?b ?d) ( if (> ?c ?a ?b ?d) then (return ?c)  ) )");
         r.eval("(deffunction max (?d ?a ?b ?c) ( if (> ?d ?a ?b ?c) then (return ?d)  ) )");
@@ -41,15 +105,15 @@ class JessJava {
         r.eval("(assert (hecho c))");       
          
         r.eval("(run)");
-        r.eval("(facts)");**/
+        r.eval("(facts)");
     } catch (Exception e ){
 
    System.out.println("This is the exception "+e);
 
-    }
+    }*/
 
   
-       return 'C';
+       return sw.toString().charAt(sw.toString().length() - 1);
     }
 
 }
