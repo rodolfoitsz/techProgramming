@@ -120,6 +120,10 @@ uint8_t* sense() {
 	stop();
 	tmp[3] = read_adc(0);
 
+	turnLeft();
+	_delay_ms(ROTATING_TIME);
+	stop();
+
 	
 	
 	return tmp;
@@ -135,9 +139,6 @@ void sendData(){
 		USART0SendByte(resultFromSensing[1]);
 		USART0SendByte(resultFromSensing[2]);
 		USART0SendByte(resultFromSensing[3]);
-
-
-
 }
 
 

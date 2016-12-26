@@ -35,7 +35,7 @@ int shutDown() {
 }
 
 /* Instantiate the JVM, find the class and instantiate it */
- int instantiateVM(int val1,int val2,int val3,int val4) {
+ int instantiateVM() {
    
    options[0].optionString = "-Djava.class.path=.";
    memset(&vm_args, 0, sizeof(vm_args));
@@ -48,32 +48,71 @@ int shutDown() {
    if (status == JNI_ERR) { printf("problem in VM creation\n\n"); return -1; }  
 
     // Looking for the class
-   cls = (*env)->FindClass(env, "JessJava");     
+   cls = (*env)->FindClass(env, "jess/Rete");     
    if (cls == 0) { printf("problem in finding class\n\n"); return shutDown(); } 
     
     // Finding class constructor
-   jmethodID mid = (*env)->GetStaticMethodID(env, cls, "dataJessMethod", "(IIII)C");
-   if (mid == 0) { printf("problem with static method\n\n"); return shutDown(); }
+   jmethodID constructor = (*env)->GetMethodID(env, cls, "<init>", "()V");
+   if (constructor == 0) { printf("problem with constructor\n\n"); return shutDown(); }
 
+    // Creating object
+   obj = (*env)->NewObject(env, cls, constructor);
+   if (obj == 0) { printf("problem with the object creation\n\n"); return shutDown(); }
    
-   jchar resultChar= (*env)->CallStaticCharMethod(env, cls, mid, val1,val2,val3,val4);
-         printf("Result of booleanMethod: %c\n", resultChar);
-
-
    return 1;
 }
  
+/* Call a RESET command on the ES */
+int reset() {
+    jmethodID mid = (*env)->GetMethodID(env, cls, "reset", "()V");
+    
+    if (mid == 0) { 
+        printf("problem detected on reset\n\n"); 
+        return shutDown();
+    }
+    else {
+        // calling the function
+        (*env)->CallVoidMethod(env, obj, mid, NULL);
+        printf("reset called\n");
+    }
+    
+    return 1;
+}
+
+
+char evalBuffer[512];
+/* Call a EVAL command and place the result on the buffer */
+int eval(char* command) {
+   
+    jmethodID mid = (*env)->GetMethodID(env, cls, "eval", "(Ljava/lang/String;)Ljess/Value;");
+    
+    if (mid == 0) { 
+        printf("problem detected\n\n"); 
+        return shutDown();
+    }
+    else {
+        // creating temporary buffer
+        //const char tmpBuffer[1024];
+        // filling it
+        //strcpy(tmpBuffer, command);
+        // converting to jstring
+        jstring arg = (*env)->NewStringUTF(env, command); 
+        // calling the function and storing the result
+       (*env)->CallVoidMethod(env, obj, mid, arg);
+        printf("eval called\n");
+    }
+    
+    return 1;
+}
+
 
 
 int main(int argc, char **argv)
 {
 
-  instantiateVM(220 ,180 ,210, 4);
   
-  shutDown();
 
-
-  /*  struct sockaddr_rc addr = { 0 };
+    struct sockaddr_rc addr = { 0 };
     int s, status,bytes_read;
    //new bluetooth 
    //char dest[18] = "98:D3:32:10:4B:79";
@@ -128,24 +167,35 @@ uint8_t recivedData;
         printf("point 4  %d\n",buf0[3] );
 
 
+    instantiateVM();
+    reset();
+
+
+    eval("(defrule r1 (hecho a) => (assert (tienes gripa)))");
   
-    
+    eval("(assert (hecho a))");
+
+    eval("(run)");
+    eval("(facts)");
+ 
+    shutDown();
+
        
 
     }
 
     if( status < 0 ) perror("uh oh");
 
-    close(s);*/
+    close(s);
     return 0;
 }
 
 //export LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-i386/jre/lib/i386/server
 
-// gcc -I/usr/lib/jvm/java-8-openjdk-i386/include/ -I/usr/lib/jvm/java-8-openjdk-i386/include/linux -L/usr/lib/jvm/java-8-openjdk-i386/jre/lib/i386/server sendData.c -lbluetooth -o sendData  -ljvm
+// gcc -I/usr/lib/jvm/java-8-openjdk-i386/include/ -I/usr/lib/jvm/java-8-openjdk-i386/include/linux -L/usr/lib/jvm/java-8-openjdk-i386/jre/lib/i386/server sendDataOld.c -lbluetooth -o sendDataOld  -ljvm
 
 
-//gcc sendData.c -lbluetooth -o sendData
+//gcc sendDataOld.c -lbluetooth -o sendDataOld
 
 
 
