@@ -1,6 +1,7 @@
 //libraries to jess
 #include <jni.h>
 #include <string.h>
+#include <stdlib.h>
 
  #ifdef _WIN32
  #define PATH_SEPARATOR ';'
@@ -28,6 +29,9 @@ JavaVMOption options[1];
  jobject obj;
  jclass cls;
 
+//id frommethod
+ jmethodID mid;
+
 
 /* Destroy the JVM */
 int shutDown() { 
@@ -36,7 +40,7 @@ int shutDown() {
 }
 
 /* Instantiate the JVM, find the class and instantiate it */
- int instantiateVM( int  *values ) {
+ int instantiateVM(  ) {
    
    options[0].optionString = "-Djava.class.path=.";
    memset(&vm_args, 0, sizeof(vm_args));
@@ -56,23 +60,32 @@ int shutDown() {
    if (cls == 0) { printf("problem in finding class\n\n"); return shutDown(); } 
     
     // Finding class constructor
-   jmethodID mid = (*env)->GetStaticMethodID(env, cls, "dataJessMethod", "([I)C");
+    mid = (*env)->GetStaticMethodID(env, cls, "dataJessMethod", "([I)C");
    if (mid == 0) { printf("problem with static method\n\n"); return shutDown(); }
 
        
-      jintArray intArray= (*env)->NewIntArray(env,4);
+     
+
+
+   return 1;
+}
+ 
+
+char evaluateNumbers( int  *values ) { 
+
+ jintArray intArray= (*env)->NewIntArray(env,4);
        
        (*env)->SetIntArrayRegion(env,intArray,0,4,values);
 
        
 
    jchar resultChar= (*env)->CallStaticCharMethod(env, cls, mid, intArray);
-         //printf("Result of StaticMethod: %c\n", resultChar);
+        printf("Result of StaticMethod: %c\n\n", resultChar);
+
+        return resultChar;
 
 
-   return 1;
 }
- 
 
 
 int main(int argc, char **argv)
@@ -102,44 +115,51 @@ int main(int argc, char **argv)
     status = connect(s, (struct sockaddr *)&addr, sizeof(addr));
 
 
-    // send a message
 
-uint8_t recivedData;
 
+    instantiateVM(); 
+
+    //char i to initialize 
+    char tmpChar='i';
 
     while( status >= 0 ) {
 
-        
-         unsigned char buf[4];
+        unsigned char buf[4];
         // char stringReceived[256];
         printf("Send a command\n");
-        char tmpChar;
-        scanf("%c",&tmpChar);
-         getchar(); // To consume the newline  
+      // scanf("%c",&tmpChar);
+      //getchar(); // To consume the newline  
         buf[0] = tmpChar;
 
+
+        // send a message
         status = write(s,buf, 4);
 
         sleep(4);
         
-        unsigned int buf0[4];
+        unsigned char dataNumbers[4];
 
-        read(s, buf0,4);
+        read(s, dataNumbers,4);
        
        //values with bigger number means  superfice is white
-        printf("point 1  %d\n",buf0[0] );
-        printf("point 2  %d\n",buf0[1] );
-        printf("point 3  %d\n",buf0[2] );
-        printf("point 4  %d\n",buf0[3] );
+        printf("point 1  %d\n",dataNumbers[0] );
+        printf("point 2  %d\n",dataNumbers[1] );
+        printf("point 3  %d\n",dataNumbers[2] );
+        printf("point 4  %d\n",dataNumbers[3] );
 
-       sleep(1);
-
-        instantiateVM(buf0);
-  
-        shutDown();
+        unsigned int bufConvToInt[4];
+        bufConvToInt[0]=dataNumbers[0];
+        bufConvToInt[1]=dataNumbers[1];
+        bufConvToInt[2]=dataNumbers[2];
+        bufConvToInt[3]=dataNumbers[3];
+        
+        tmpChar=evaluateNumbers(bufConvToInt);
        
 
     }
+
+    
+    shutDown();
 
     if( status < 0 ) perror("uh oh");
 

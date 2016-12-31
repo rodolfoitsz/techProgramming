@@ -1,4 +1,3 @@
-
 import jess.*;
 import java.util.Arrays;
 import java.io.StringWriter;
@@ -20,22 +19,21 @@ try{
         r.eval("(defrule right (_right)  => (printout t \"turn_right R\n \"  ))");
         r.eval("(defrule back (_back)  => (printout t \"go_back B\n \") )");
 
-
      
     // Connect the "t" router to the StringWriter
     r.addOutputRouter("t", sw);
 
  
      final  int val1 = arrayValues[0];
-     final int val2 = arrayValues[1];
-     final int val3 = arrayValues[2];
+     final  int val2 = arrayValues[1];
+     final  int val3 = arrayValues[2];
      final  int val4 = arrayValues[3];
 
  Arrays.sort( arrayValues );
 
  int biggestNumber =arrayValues[3];
 
-
+System.out.println("the biggest number"+biggestNumber);
 
  if(biggestNumber == val1){
    r.eval("(assert (_for))");
@@ -113,7 +111,7 @@ r.eval("(assert (_left))");
     }*/
 
   
-       return sw.toString().charAt(sw.toString().length() - 1);
+       return sw.toString().charAt(sw.toString().trim().length() -1 );
     }
 
 }

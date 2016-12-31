@@ -4,7 +4,7 @@
 #define USART_BAUDRATE 9600
 #define UBRR_VALUE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 
-#define MOVING_TIME 100
+#define MOVING_TIME 500
 #define ROTATING_TIME 500
 
 int initialize() {
@@ -14,28 +14,30 @@ int initialize() {
 	DDRD |= _BV(DDD3);
 }
 
-int moveBackward() {
+int moveForward() {
 	PORTD &= ~_BV(PORTD6);
 	PORTD &= ~_BV(PORTD4);
 	PORTD |= _BV(PORTD5);
 	PORTD |= _BV(PORTD3);	
 }
 
-int moveForward() {	
+int moveBackward() {	
+
+
 	PORTD |= _BV(PORTD6);
 	PORTD |= _BV(PORTD4);
 	PORTD &= ~_BV(PORTD5);
 	PORTD &= ~_BV(PORTD3);
 }
 
-int turnLeft() {	
+int turnRight() {	
 	PORTD &= ~_BV(PORTD6);
 	PORTD |= _BV(PORTD4);
 	PORTD |= _BV(PORTD5);
 	PORTD &= ~_BV(PORTD3);
 }
 
-int turnRight() {	
+int turnLeft() {	
 	PORTD |= _BV(PORTD6);
 	PORTD &= ~_BV(PORTD4);
 	PORTD &= ~_BV(PORTD5);
@@ -120,9 +122,8 @@ uint8_t* sense() {
 	stop();
 	tmp[3] = read_adc(0);
 
-	turnLeft();
-	_delay_ms(ROTATING_TIME);
-	stop();
+
+	_delay_ms(ROTATING_TIME*2);
 
 	
 	
@@ -167,29 +168,59 @@ int main (void) {
         // Receive data
         recivedData = USART0ReceiveByte();
        
-         if (recivedData==105) 				// turn left and go in that dir
+         if (recivedData==105) 				// init sense
 		{
 
+       
        sendData();
 
 		}
 
-        
-        if (recivedData==65) 				// turn left and go in that dir
-		{
+        else if (recivedData==70)        // if receive F don't turn, just go forward 
+		{	
+		move();	
+		_delay_ms(ROTATING_TIME*2);	
+		sendData();	
+		}
 
+		else if (recivedData==76) 				// if receive L turn left and go in that dir
+		{
+		 turnLeft();
+		_delay_ms(ROTATING_TIME);
+		stop();
+		move();
+		_delay_ms(ROTATING_TIME*2);
+        sendData();
   
 		}
-		else if (recivedData==66) 			// don't turn, simply go 
-		{		
-			move();
-		}
-		else if (recivedData==67) 			// turn right and go in that dir
+		
+		else if (recivedData==82) 			// if receive R turn right and go in that dir
 		{
+
+             turnRight();
+			_delay_ms(ROTATING_TIME);
+			stop();
+			move();
+			_delay_ms(ROTATING_TIME*2);
+     		sendData();
+			
+		}
+
+		else if (recivedData==66) 			// if receive  go back 
+		{
+	
+           turnRight();
+			_delay_ms(ROTATING_TIME);
 			turnRight();
 			_delay_ms(ROTATING_TIME);
 			stop();
 			move();
+			_delay_ms(ROTATING_TIME*2);
+
+			sendData();
+
+
+			
 		}
 		else if (recivedData==68)			// has arrived. STOP
 			exit++;        
