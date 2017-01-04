@@ -1,0 +1,81 @@
+ #include <stdio.h>
+          #include <sys/socket.h>
+          #include <arpa/inet.h>
+          #include <stdlib.h>
+          #include <string.h>
+          #include <unistd.h>
+          #include <netinet/in.h>
+
+          #define BUFFSIZE 32
+          void Die(char *mess) { perror(mess); exit(1); }
+
+
+ int main(int argc, char *argv[]) {
+            int sock;
+            struct sockaddr_in echoserver;
+            char buffer[BUFFSIZE];
+            unsigned int echolen;
+            int received = 0;
+
+            if (argc != 4) {
+              fprintf(stderr, "USAGE: TCPecho <server_ip> <word> <port>\n");
+              exit(1);
+            }
+            /* Create the TCP socket */
+            //PF_INET just means it uses IP
+            //SOCK_STREAM and IPPROTO_TCP go together for a TCP socket.
+            /*Las variables que deben aparecer son SOCK_STREAM o SOCK_DGRAM 
+            según querramos usar sockets de Flujo o de Datagramas, respectivamente.
+             La función socket() nos devuelve un descriptor de socket, el cual podremos usar luego para llamadas
+              al sistema. Si nos devuelve -1, se ha producido un error
+               (obsérvese que esto puede resultar útil para rutinas de verificación de errores).
+            */
+            if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+              Die("Failed to create socket");
+            }
+
+            /* Construct the server sockaddr_in structure */
+            memset(&echoserver, 0, sizeof(echoserver));       /* Clear struct */
+            echoserver.sin_family = AF_INET;                  /* Internet/IP */
+            echoserver.sin_addr.s_addr = inet_addr(argv[1]);  /* IP address */
+            echoserver.sin_port = htons(atoi(argv[3]));       /* server port */
+            /* Establish connection */
+            if (connect(sock,
+                        (struct sockaddr *) &echoserver,
+                        sizeof(echoserver)) < 0) {
+              Die("Failed to connect with server");
+            }
+
+
+           /*     Send the word to the server
+            Now that the connection is established,
+            we are ready to send and receive data. 
+            A call to send() takes as arguments the socket handle itself,
+             the string to send, the length of the sent string (for verification),
+              and a flag argument. Normally the flag is the default value 0. 
+              The return value of the send() call is the number of bytes successfully sent.
+            */
+            echolen = strlen(argv[2]);
+            if (send(sock, argv[2], echolen, 0) != echolen) {
+              Die("Mismatch in number of sent bytes");
+            }
+            /* Receive the word back from the server 
+               recv() devuelve el número de bytes leídos en el búfer, o -1 si se produjo un error.
+            */
+            fprintf(stdout, "Received: ");
+            while (received < echolen) {
+              int bytes = 0;
+              if ((bytes = recv(sock, buffer, BUFFSIZE-1, 0)) < 1) {
+                Die("Failed to receive bytes from server");
+              }
+              received += bytes;
+              buffer[bytes] = '\0';        /* Assure null terminated string */
+              fprintf(stdout, buffer);
+            }
+
+
+ fprintf(stdout, "\n");
+         close(sock);
+         exit(0);
+       }
+
