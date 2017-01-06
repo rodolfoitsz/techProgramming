@@ -79,3 +79,8 @@
          exit(0);
        }
 
+
+//gcc client.c -o client
+
+//./client 192.168.1.84 hola 1025
+

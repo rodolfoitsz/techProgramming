@@ -15,10 +15,13 @@
           void HandleClient(int sock) {
             char buffer[BUFFSIZE];
             int received = -1;
+
+            
             /* Receive message */
             if ((received = recv(sock, buffer, BUFFSIZE, 0)) < 0) {
               Die("Failed to receive initial bytes from client");
             }
+             
             /* Send bytes and check for more incoming data in loop */
             while (received > 0) {
               /* Send back received data */
@@ -29,7 +32,27 @@
               if ((received = recv(sock, buffer, BUFFSIZE, 0)) < 0) {
                 Die("Failed to receive additional bytes from client");
               }
+
+              // printf("%s\n",buffer);
+
+
+               int i=0;
+               while (buffer[i]!='\0'){
+                
+                if(buffer[i]=='?'){
+                	int j=i;
+                      while (buffer[j]!='?'){
+
+                      printf("%c\n",buffer[j]);  
+                        j++;
+                      }
+                }
+                i++;
+               }
+ 
+             
             }
+
             close(sock);
           }
 
@@ -114,3 +137,5 @@ es que todos los puertos menores que 1024 están reservados.
   (y siempre que no estén siendo usados por otros programas).
 
           */
+
+//gcc server.c -o server
