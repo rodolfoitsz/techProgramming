@@ -33,7 +33,22 @@
                 Die("Failed to receive additional bytes from client");
               }
 
-               printf("%s\n",buffer);
+              // printf("%s\n",buffer);
+
+
+               int i=0;
+               while (buffer[i]!='\0'){
+                
+                if(buffer[i]=='?'){
+                	int j=i;
+                      while (buffer[j]!='?'){
+
+                      printf("%c\n",buffer[j]);  
+                        j++;
+                      }
+                }
+                i++;
+               }
  
              
             }
