@@ -1,4 +1,4 @@
- #include <stdio.h>
+          #include <stdio.h>
           #include <sys/socket.h>
           #include <arpa/inet.h>
           #include <stdlib.h>
@@ -6,8 +6,78 @@
           #include <unistd.h>
           #include <netinet/in.h>
 
+
+#include <jni.h>
+#include <stdlib.h>
+
           #define MAXPENDING 5    /* Max connection requests */
           #define BUFFSIZE 32
+
+
+JavaVMOption options[1];
+ JNIEnv *env;
+ JavaVM *jvm;
+ JavaVMInitArgs vm_args;
+ long status;
+ jobject obj;
+ jclass cls;
+
+//id frommethod
+ jmethodID mid;
+
+
+
+
+/* Destroy the JVM */
+int shutDown() { 
+    (*jvm)->DestroyJavaVM(jvm); 
+    return 0; 
+}
+
+
+
+/* Instantiate the JVM, find the class and instantiate it */
+ int instantiateVM(  ) {
+   
+   options[0].optionString = "-Djava.class.path=.";
+   memset(&vm_args, 0, sizeof(vm_args));
+   vm_args.version = JNI_VERSION_1_2;
+   vm_args.nOptions = 1;
+   vm_args.options = options;
+   status = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+  
+    // Virtual Machine creation
+   if (status == JNI_ERR) { printf("problem in VM creation\n\n"); return -1; }  
+
+
+    // Looking for the class
+   cls = (*env)->FindClass(env, "JavaProgram");     
+   if (cls == 0) { printf("problem in finding class\n\n"); return shutDown(); } 
+    
+    // Finding class constructor
+    mid = (*env)->GetStaticMethodID(env, cls, "removeCommas", "(Ljava/lang/String;)C");
+   if (mid == 0) { printf("problem with static method\n\n"); return shutDown(); }
+
+   return 1;
+}
+
+
+
+char removeCommas( char  *values ) { 
+
+   jstring string = (*env)->NewStringUTF(env,values);
+
+printf("Result of StaticMethod:");
+
+   jchar resultChar= (*env)->CallStaticCharMethod(env, cls, mid, string);
+        printf("Result of StaticMethod: %c\n\n", resultChar);
+
+        return resultChar;
+
+
+}
+
+
           void Die(char *mess) { perror(mess); exit(1); }
  
 
@@ -33,25 +103,27 @@
                 Die("Failed to receive additional bytes from client");
               }
 
-              // printf("%s\n",buffer);
+              
 
-
-               int i=0;
-               while (buffer[i]!='\0'){
-                
-                if(buffer[i]=='?'){
-                	int j=i;
-                      while (buffer[j]!='?'){
-
-                      printf("%c\n",buffer[j]);  
-                        j++;
-                      }
-                }
-                i++;
-               }
- 
-             
             }
+
+           // printf("%s\n",buffer); 
+
+            instantiateVM(  );
+            removeCommas(buffer);
+          
+           
+
+
+          /*  int i =0;
+            while(buffer[i]!='\0'){
+
+             if (buffer[i]=='?')
+              printf("%s\n","hola");
+            i++;
+
+            }*/
+
 
             close(sock);
           }
@@ -139,3 +211,12 @@ es que todos los puertos menores que 1024 están reservados.
           */
 
 //gcc server.c -o server
+
+
+//export LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-i386/jre/lib/i386/server
+
+// gcc -I/usr/lib/jvm/java-8-openjdk-i386/include/ -I/usr/lib/jvm/java-8-openjdk-i386/include/linux -L/usr/lib/jvm/java-8-openjdk-i386/jre/lib/i386/server server.c -o server  -ljvm
+
+
+//kill -9 %1
+// kill %1
