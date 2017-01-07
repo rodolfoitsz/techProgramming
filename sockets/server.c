@@ -7,14 +7,17 @@
           #include <netinet/in.h>
 
 
-#include <jni.h>
-#include <stdlib.h>
+          #include <jni.h>
+          #include <stdlib.h>
+          #include "BeFirstSearch.h"
+
+
 
           #define MAXPENDING 5    /* Max connection requests */
-          #define BUFFSIZE 32
+          #define BUFFSIZE 200
 
 
-JavaVMOption options[1];
+ JavaVMOption options[1];
  JNIEnv *env;
  JavaVM *jvm;
  JavaVMInitArgs vm_args;
@@ -55,7 +58,7 @@ int shutDown() {
    if (cls == 0) { printf("problem in finding class\n\n"); return shutDown(); } 
     
     // Finding class constructor
-    mid = (*env)->GetStaticMethodID(env, cls, "removeCommas", "(Ljava/lang/String;)C");
+    mid = (*env)->GetStaticMethodID(env, cls, "removeCommas", "(Ljava/lang/String;)Ljava/lang/String;");
    if (mid == 0) { printf("problem with static method\n\n"); return shutDown(); }
 
    return 1;
@@ -63,16 +66,23 @@ int shutDown() {
 
 
 
-char removeCommas( char  *values ) { 
+char * removeCommas( char  *values ) { 
 
    jstring string = (*env)->NewStringUTF(env,values);
 
-printf("Result of StaticMethod:");
 
-   jchar resultChar= (*env)->CallStaticCharMethod(env, cls, mid, string);
-        printf("Result of StaticMethod: %c\n\n", resultChar);
+   jstring stringReceived= (*env)->CallObjectMethod(env, cls, mid, string);
+   
+  // printf("Result of StaticMethod: %s\n\n", stringReceived);
 
-        return resultChar;
+   const char  *nativeString = (*env)->GetStringUTFChars(env, stringReceived, 0);
+
+    (*env)->ReleaseStringUTFChars(env,stringReceived,NULL);
+     
+    
+    char * my_str = strdup(nativeString);
+
+        return my_str;
 
 
 }
@@ -107,14 +117,13 @@ printf("Result of StaticMethod:");
 
             }
 
-           // printf("%s\n",buffer); 
+          // printf("%s\n",buffer); 
 
             instantiateVM(  );
-            removeCommas(buffer);
+           char *my_str = removeCommas(buffer);
+            beFirstSearch(my_str);
           
-           
-
-
+  
           /*  int i =0;
             while(buffer[i]!='\0'){
 
@@ -200,7 +209,12 @@ accept()/* En la próxima sección se explicará como usar esta llamada */
                               inet_ntoa(echoclient.sin_addr));
               HandleClient(clientsock);
             }
-          }
+         
+
+       shutDown();  
+       return 0;
+
+     }
 
           /*
 Un aspecto importante sobre los puertos y la llamada bind() 
